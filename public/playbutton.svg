@@ -1,0 +1,3 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg">
+ <style>.fcst0,.fcst1{fill-rule:evenodd;clip-rule:evenodd}.fcst0{opacity:.6;fill-opacity:.6;enable-background:new}.fcst1{fill:#fff}</style><circle class="fcst0" cx="40" cy="40" r="40"></circle><path id="fcPlay" class="fcst1" d="M40 5C20.7 5 5 20.7 5 40s15.7 35 35 35 35-15.7 35-35S59.3 5 40 5zm0 67C22.3 72 8 57.7 8 40S22.3 8 40 8s32 14.4 32 32-14.3 32-32 32zm13.8-33.8l-19.4-13c-.6-.4-2.2-.4-2.4 1.2v25.8c.1 1.6 1.8 1.7 2.4 1.2l19.5-12.9c.4-.2 1.1-1.4-.1-2.3zM35 49.5V29.2l15.3 10.2L35 49.5z"></path>
+</svg>
