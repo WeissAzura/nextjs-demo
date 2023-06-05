@@ -8,7 +8,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
-
 export async function fetchPosts({ queryKey, pageParam = 1 }) {
   const [_, watchAllCheckboxes, searchTerm] = queryKey;
   let stringUrl = "";
@@ -49,7 +48,7 @@ const Posts = ({ post, index, lastRef, last }) => {
     >
       <div className={"page-container"}>
         <div className={"flex flex-col md:flex-row md:gap-x-[28px]"}>
-          <div className={"md:basis-1/3 md:max-w-[calc(1/3)]"}>
+          <div className={"md:max-w-[calc(1/3)] md:basis-1/3"}>
             <Image
               src={
                 process.env.NEXT_PUBLIC_API_URL +
@@ -58,19 +57,19 @@ const Posts = ({ post, index, lastRef, last }) => {
               alt={post?.attributes?.thumbnail?.data?.attributes?.name}
               width={355}
               height={200}
-              className={"w-full object-cover mb-[15px] md:mb-0"}
+              className={"mb-[15px] w-full object-cover md:mb-0"}
             />
           </div>
-          <div className={"md:basis-2/3 md:max-w-[calc(2/3)] flex flex-col"}>
+          <div className={"flex flex-col md:max-w-[calc(2/3)] md:basis-2/3"}>
             <div
               className={
-                "mb-[5px] text-[15px] leading-[25px] font-semibold text-[#a0a9ae] min-[992px]:mb-[10px]"
+                "mb-[5px] text-[15px] font-semibold leading-[25px] text-[#a0a9ae] min-[992px]:mb-[10px]"
               }
             >
               {outputDate}
             </div>
             <div className={"heading-5"}>{post?.attributes?.title}</div>
-            <div className={"paragraph md:mb-[20px] md:block hidden"}>
+            <div className={"paragraph hidden md:mb-[20px] md:block"}>
               {post?.attributes?.excerpt}
             </div>
             <Link
@@ -155,27 +154,27 @@ export default function FilterBar() {
   }
   return (
     <>
-      <div className="mh5:py-[40px] py-[30px] bg-[#f3f3f3] md:mb-[40px] mb-[30px] mh9:mb-[50px] mh12:mb-[60px]">
+      <div className="mb-[30px] bg-[#f3f3f3] py-[30px] mh5:py-[40px] md:mb-[40px] mh9:mb-[50px] mh12:mb-[60px]">
         <div className={"page-container"}>
           <form onSubmit={handleSubmit(onSubmit)} className={"mh5:py-[40px]"}>
-            <div className={"flex gap-x-[1rem] flex-col mh9:flex-row"}>
+            <div className={"flex flex-col gap-x-[1rem] mh9:flex-row"}>
               <div className={"max-w-full mh9:max-w-[50%] mh9:flex-[0_0_50%]"}>
-                <div className={"mb-[9px] font-semibold paragraph"}>
+                <div className={"paragraph mb-[9px] font-semibold"}>
                   Company
                 </div>
                 <div
                   className={
-                    "flex flex-col mh5:flex-row mh5:items-center mh5:flex-wrap gap-y-[1rem]"
+                    "flex flex-col gap-y-[1rem] mh5:flex-row mh5:flex-wrap mh5:items-center"
                   }
                 >
                   {categories.data?.data?.map((category) => (
                     <div
                       key={category?.attributes?.slug}
-                      className={"w-full mh5:w-1/3 relative mh5:mt-[10px]"}
+                      className={"relative w-full mh5:mt-[10px] mh5:w-1/3"}
                     >
                       <input
                         className={
-                          "invisible opacity-0 -z-10 absolute top-0 w-[18px] h-[18px] m-0"
+                          "invisible absolute top-0 -z-10 m-0 h-[18px] w-[18px] opacity-0"
                         }
                         id={category?.attributes?.slug}
                         type={"checkbox"}
@@ -202,7 +201,7 @@ export default function FilterBar() {
               </div>
               <div className={"max-w-full mh9:max-w-[50%] mh9:flex-[0_0_50%]"}>
                 <div
-                  className={"mt-[1rem] mh5:mt-0 mh5:mb-[9px] font-semibold"}
+                  className={"mt-[1rem] font-semibold mh5:mb-[9px] mh5:mt-0"}
                 >
                   <label htmlFor={"f_search"} className={"paragraph"}>
                     Search
@@ -214,7 +213,7 @@ export default function FilterBar() {
                       "Search for documents, products, news articles..."
                     }
                     className={
-                      "mt-[10px] w-full py-[14px] px-[20px] min-[992px]:py-[16px] border-[2px] border-[white] border-solid min-[992px]:px-[20px] placeholder:paragraph focus:border-[--color-brand] focus:outline-0 focus:shadow-none"
+                      "placeholder:paragraph mt-[10px] w-full border-[2px] border-solid border-[white] px-[20px] py-[14px] focus:border-[--color-brand] focus:shadow-none focus:outline-0 min-[992px]:px-[20px] min-[992px]:py-[16px]"
                     }
                     type={"text"}
                     id={"f_search"}

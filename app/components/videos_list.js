@@ -5,7 +5,6 @@ import "yet-another-react-lightbox/styles.css";
 import { useState } from "react";
 import { Lightbox } from "yet-another-react-lightbox";
 import Image from "next/image";
-
 export const CustomSlide = ({ item }) => {
   const [open, setOpen] = useState(false);
   if (item?.video)

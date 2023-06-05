@@ -1,18 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "1337",
+        protocol: "https",
+        hostname: "54.64.203.213",
+        port: "",
         pathname: "/uploads/**",
       },
     ],
+    loader: "custom",
+    loaderFile: "./app/lib/imageLoader.js",
   },
 };
 

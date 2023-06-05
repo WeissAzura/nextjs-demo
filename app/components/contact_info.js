@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import joinClass from "@/app/lib/joinClass";
 const Card = ({ row, active, setActive }) => {
   const accordionRef = useRef(null);

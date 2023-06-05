@@ -6,6 +6,7 @@ import PostSlider from "@/app/components/posts_slider";
 import Videos from "@/app/components/videos_list";
 import Link from "next/link";
 import joinClass from "@/app/lib/joinClass";
+
 export const metadata = {
   title: "Home | Wirtgen Group in USA and Canada",
   description:

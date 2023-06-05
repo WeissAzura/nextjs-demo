@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import joinClass from "@/app/lib/joinClass";
 import { useRef, useState } from "react";
 import { format } from "date-fns";
+
 export default function Contact({ color, data }) {
   const [toggle, setToggle] = useState(false);
   const accordion = useRef(null);

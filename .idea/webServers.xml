@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="188c4acc-0c64-4637-9611-55e077c52773" name="WP" url="http://52.69.26.94/">
+        <fileTransfer rootFolder="/var/www/html/wordpress/wp-content/themes/onextdigital" accessType="SFTP" host="52.69.26.94" port="22" sshConfigId="9bfa1037-7880-42ba-9c3f-777a927a2dd5" sshConfig="ubuntu@52.69.26.94:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

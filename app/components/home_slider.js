@@ -11,6 +11,7 @@ import "swiper/css/autoplay";
 import { Lightbox } from "yet-another-react-lightbox";
 import { useState } from "react";
 import "yet-another-react-lightbox/styles.css";
+
 const SwiperButtonNext = ({ children }) => {
   const swiper = useSwiper();
   return (
