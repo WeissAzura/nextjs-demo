@@ -4,14 +4,26 @@ import ReactMarkdown from "react-markdown";
 import joinClass from "@/app/lib/joinClass";
 import { useRef, useState } from "react";
 import { format } from "date-fns";
+import { get } from "lodash";
 
 export default function Contact({ color, data }) {
   const [toggle, setToggle] = useState(false);
   const accordion = useRef(null);
   const [toggleHour, setToggleHour] = useState(false);
   const accordionHour = useRef(null);
-  const hourStart = data?.start_hour?.split(/[:.]/);
-  const hourEnd = data?.end_hour?.split(/[:.]/);
+  const hourStart = get(data, "start_hour")?.split(/[:.]/);
+  const hourEnd = get(data, "end_hour")?.split(/[:.]/);
+  const imageUrl = get(data, "image.data.attributes.url", "");
+  const imageAlt = get(data, "image.data.attributes.name", "");
+  const title = get(data, "title", "");
+  const leftText = get(data, "left_text", "");
+  const normalContact = get(data, "normal_contact", "");
+  const hotline = get(data, "hotline", []);
+  const email = get(data, "email", "");
+  const link = get(data, "link", "");
+  const workdayStart = get(data, "workday_start", "");
+  const workdayEnd = get(data, "workday_end", "");
+  const timezone = get(data, "timezone", "");
   const start = hourStart
     ? format(
         new Date(Date.now()).setHours(
@@ -62,13 +74,10 @@ export default function Contact({ color, data }) {
         >
           <div className={"md:max-w-[41.66666667%] mh9:max-w-[33.33333333%]"}>
             <Image
-              src={
-                process.env.NEXT_PUBLIC_API_URL +
-                data?.image?.data?.attributes?.url
-              }
+              src={process.env.NEXT_PUBLIC_API_URL + imageUrl}
               width={768}
               height={432}
-              alt={"contact"}
+              alt={imageAlt}
               className={"aspect-video w-full object-contain"}
             />
           </div>
@@ -78,14 +87,14 @@ export default function Contact({ color, data }) {
             }
           >
             <div className={"heading-2 pt-[25px] font-bold md:pt-0"}>
-              {data?.title}
+              {title}
             </div>
             <div className="flex flex-col border-b-[1px] border-solid border-[rgba(0,0,0,.125)] md:py-[20px] mh9:mb-0 mh9:flex-row">
               <a href="#map-section" className="mb-[20px] basis-1/2">
                 <ReactMarkdown
                   className={"intro whitespace-pre-wrap font-medium "}
                 >
-                  {data?.left_text}
+                  {leftText}
                 </ReactMarkdown>
               </a>
               {start && end && (
@@ -135,10 +144,10 @@ export default function Contact({ color, data }) {
                     }}
                   >
                     <div className="paragraph font-medium">
-                      {data?.workday_start} - {data?.workday_end}
+                      {workdayStart} - {workdayEnd}
                     </div>
                     <div className="paragraph mb-[20px] font-medium">
-                      {start} - {end} {data?.timezone}
+                      {start} - {end} {timezone}
                     </div>
                   </div>
                 </div>
@@ -186,10 +195,10 @@ export default function Contact({ color, data }) {
                     maxHeight: toggle && accordion.current.scrollHeight,
                   }}
                 >
-                  {data?.normal_contact && (
+                  {normalContact && (
                     <a
                       className={"flex items-center gap-x-[10px]"}
-                      href={`tel:${data?.normal_contact}`}
+                      href={`tel:${normalContact}`}
                     >
                       <svg
                         className={
@@ -204,11 +213,11 @@ export default function Contact({ color, data }) {
                         ></path>
                       </svg>
                       <span className={"paragraph font-medium"}>
-                        {data?.normal_contact}
+                        {normalContact}
                       </span>
                     </a>
                   )}
-                  {data?.hotline?.length > 0 && (
+                  {hotline.length > 0 && (
                     <div className="flex items-center gap-x-[10px]">
                       <svg
                         className={
@@ -224,20 +233,23 @@ export default function Contact({ color, data }) {
                         ></path>
                       </svg>
                       <div className="flex flex-col">
-                        {data?.hotline.map((item) => (
-                          <a key={item?.content} href={`tel:${item?.content}`}>
+                        {hotline.map((item) => (
+                          <a
+                            key={get(item, "content", "")}
+                            href={`tel:${get(item, "content")}`}
+                          >
                             <span className={"paragraph font-medium"}>
-                              {item?.title}
+                              {get(item, "title", "")}
                             </span>
                           </a>
                         ))}
                       </div>
                     </div>
                   )}
-                  {data?.email && (
+                  {email && (
                     <a
                       className={"mb-[20px] flex items-center gap-x-[10px]"}
-                      href={`mailto:${data?.email}`}
+                      href={`mailto:${email}`}
                     >
                       <svg
                         className={
@@ -251,20 +263,18 @@ export default function Contact({ color, data }) {
                           d="M4.697 9.3c-1.346 0-2.475 1.156-2.475 2.534v24.331c0 1.378 1.129 2.534 2.475 2.534h38.606c1.346 0 2.475-1.156 2.475-2.534V11.834c0-1.378-1.129-2.534-2.475-2.534H4.697zm2.846 3.041h32.914L24.526 26.914c-.217.198-.835.198-1.052 0L7.543 12.341zm-2.351 1.917l11.121 10.186-11.121 9.425V14.258zm37.616 0v19.611l-11.121-9.425 11.121-10.186zM18.556 26.487l2.939 2.693c1.442 1.319 3.569 1.319 5.011 0l2.939-2.693 10.827 9.172H7.729l10.827-9.172z"
                         ></path>
                       </svg>
-                      <span className={"paragraph font-medium"}>
-                        {data?.email}
-                      </span>
+                      <span className={"paragraph font-medium"}>{email}</span>
                     </a>
                   )}
                 </div>
               </div>
-              {data?.link && (
+              {link && (
                 <div className="self-center md:self-start mh12:basis-1/2">
                   <a
                     className="mx-auto inline-block rounded-[50px] border-[2px] border-solid border-[--color-brand] bg-[--color-brand] px-[35px] py-[9px] text-[14px] font-semibold text-white duration-500 hover:border-[#516a78] hover:bg-[#516a78] mh5:text-[15px] mh9:py-[12px]"
-                    href={data?.link}
+                    href={link}
                   >
-                    {data?.link}
+                    {link}
                   </a>
                 </div>
               )}

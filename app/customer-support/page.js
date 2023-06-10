@@ -4,6 +4,7 @@ import { InfoRow } from "@/app/page";
 import ReactMarkdown from "react-markdown";
 import ContactList from "@/app/components/contact_info";
 import GMap from "@/app/components/google_map";
+import { get } from "lodash";
 export const metadata = {
   title: "Customer Support | Wirtgen Group in USA and Canada",
   description: "WIRTGEN AMERICA - Your WIRTGEN GROUP contact in USA and Canada",
@@ -20,6 +21,30 @@ async function fetchData() {
 export default async function CustomerSupport() {
   const data = fetchData();
   const [generalData] = await Promise.all([data]);
+  const title = get(generalData, "data.attributes.title", "Customer Support");
+  const contact = get(generalData, "data.attributes.contact", {});
+  const contactSectionTitle = get(
+    generalData,
+    "data.attributes.contact_section_title",
+    ""
+  );
+  const contactSectionContent = get(
+    generalData,
+    "data.attributes.contact_section_content",
+    ""
+  );
+  const contactInfo = get(generalData, "data.attributes.contact_info", []);
+  const infoRows = get(generalData, "data.attributes.info_rows", []);
+  const mapSectionTitle = get(
+    generalData,
+    "data.attributes.map_section_title",
+    ""
+  );
+  const mapSectionContent = get(
+    generalData,
+    "data.attributes.map_section_content",
+    ""
+  );
   return (
     <>
       <Breadcrumbs
@@ -36,35 +61,27 @@ export default async function CustomerSupport() {
               "mx-auto text-center mh5:max-w-[83.33333333%] mh12:max-w-[65%]"
             }
           >
-            <h2 className={"heading-1 font-bold"}>
-              {generalData?.data?.attributes?.title}
-            </h2>
+            <h2 className={"heading-1 font-bold"}>{title}</h2>
           </div>
         </div>
       </div>
-      <Contact color={"gray"} data={generalData?.data?.attributes?.contact} />
+      <Contact color={"gray"} data={contact} />
       <div className={"py-[30px] md:py-[40px] mh9:py-[50px] mh12:py-[60px]"}>
         <div className={"page-container"}>
           <div className={"mx-auto mh5:max-w-[83.33333333%] mh12:max-w-[65%]"}>
-            <div className="heading-2 font-bold">
-              {generalData?.data?.attributes?.contact_section_title}
-            </div>
-            <div className="paragraph">
-              {generalData?.data?.attributes?.contact_section_content}
-            </div>
+            <div className="heading-2 font-bold">{contactSectionTitle}</div>
+            <div className="paragraph">{contactSectionContent}</div>
           </div>
         </div>
       </div>
-      <ContactList rows={generalData?.data?.attributes?.contact_info} />
-      <InfoRow rows={generalData?.data?.attributes?.info_rows} reverse={true} />
+      <ContactList rows={contactInfo} />
+      <InfoRow rows={infoRows} reverse={true} />
       <div className={"pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"}>
         <div className={"page-container"}>
           <div className={"mx-auto mh5:max-w-[83.33333333%] mh12:max-w-[65%]"}>
-            <div className="heading-2 font-bold">
-              {generalData?.data?.attributes?.map_section_title}
-            </div>
+            <div className="heading-2 font-bold">{mapSectionTitle}</div>
             <ReactMarkdown className="paragraph whitespace-pre-wrap">
-              {generalData?.data?.attributes?.map_section_content}
+              {mapSectionContent}
             </ReactMarkdown>
           </div>
         </div>

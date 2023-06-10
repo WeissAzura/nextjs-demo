@@ -2,6 +2,7 @@ import Breadcrumbs from "@/app/components/breadcrumbs";
 import { dehydrate, Hydrate } from "@tanstack/react-query";
 import getQueryClient from "@/app/getQueryClient";
 import FilterBar from "@/app/components/news-filter";
+import { get } from "lodash";
 
 export async function fetchCategories() {
   const response = await fetch(
@@ -23,6 +24,8 @@ async function fetchHeading() {
   return res.json();
 }
 async function NewsHeading({ heading }) {
+  const title = get(heading, "data.attributes.title", "");
+  const content = get(heading, "data.attributes.content", "");
   return (
     <div className={"py-[30px] md:py-[40px] mh9:py-[50px] mh12:py-[60px]"}>
       <div className={"page-container"}>
@@ -31,10 +34,8 @@ async function NewsHeading({ heading }) {
             "mx-auto text-center mh5:max-w-[83.33333333%] mh12:max-w-[66.66666667%]"
           }
         >
-          <h2 className={"heading-1 font-bold"}>
-            {heading?.data?.attributes?.title}
-          </h2>
-          <div className={"intro"}>{heading?.data?.attributes?.content}</div>
+          <h2 className={"heading-1 font-bold"}>{title}</h2>
+          <div className={"intro"}>{content}</div>
         </div>
       </div>
     </div>

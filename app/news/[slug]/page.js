@@ -4,7 +4,8 @@ import joinClass from "@/app/lib/joinClass";
 import Contact from "@/app/components/contact_section";
 import { NavigationBar } from "@/app/components/navigation_bar";
 import Slider from "@/app/components/news_slider";
-import { CustomSlide } from "@/app/components/videos_list";
+import { CustomVideo } from "@/app/components/videos_list";
+import { head, get } from "lodash";
 
 async function fetchInfo({ params }) {
   const res = await fetch(
@@ -17,10 +18,10 @@ async function fetchInfo({ params }) {
 }
 
 const DynamicZone = ({ data, color }) => {
-  return data?.map((item, index) => {
-    if (item?.__component === "shared.navigation-bar") {
+  return data.map((item, index) => {
+    if (item.__component === "shared.navigation-bar") {
       return <NavigationBar item={item} color={color} key={index} />;
-    } else if (item?.__component === "shared.content-row") {
+    } else if (item.__component === "shared.content-row") {
       return (
         <div
           key={index}
@@ -41,7 +42,8 @@ const DynamicZone = ({ data, color }) => {
           </div>
         </div>
       );
-    } else if (item?.__component === "shared.download-row") {
+    } else if (item.__component === "shared.download-row") {
+      const url = get(item, "download.data.attributes.url", "");
       return (
         <div
           id={"download-section"}
@@ -71,10 +73,7 @@ const DynamicZone = ({ data, color }) => {
                     color === "gray" &&
                       "border-[--color-brand] bg-[--color-brand] text-white"
                   )}
-                  href={
-                    process.env.NEXT_PUBLIC_API_URL +
-                    item?.download?.data?.attributes?.url
-                  }
+                  href={process.env.NEXT_PUBLIC_API_URL + url}
                 >
                   Download
                 </a>
@@ -83,11 +82,11 @@ const DynamicZone = ({ data, color }) => {
           </div>
         </div>
       );
-    } else if (item?.__component === "shared.article-video") {
+    } else if (item.__component === "shared.article-video") {
       return (
         <div className={"section-page"} key={index}>
           <div className={"page-container"}>
-            <CustomSlide item={item} />
+            <CustomVideo item={item} />
           </div>
         </div>
       );
@@ -98,17 +97,26 @@ const DynamicZone = ({ data, color }) => {
 export default async function Post({ params }) {
   const InfoData = fetchInfo({ params });
   const [info] = await Promise.all([InfoData]);
-
+  const processedData = head(info?.data);
+  const color = get(processedData, "attributes.color", "");
+  const linkTitle = get(processedData, "attributes.link_title", "");
+  const slug = get(processedData, "attributes.slug", "");
+  const title = get(processedData, "attributes.title", "");
+  const headingContent = get(processedData, "attributes.heading_content", "");
+  const articleContent = get(processedData, "attributes.article_content", []);
+  const slider = get(processedData, "attributes.slider_1", []);
+  const bottomSection = get(processedData, "attributes.bottom_section", []);
+  const contact = get(processedData, "attributes.contact", {});
   return (
     <>
       <Breadcrumbs
-        color={info?.data[0]?.attributes?.color}
+        color={color}
         items={[
           { label: "Home", path: "/" },
           { label: "News", path: "/news" },
           {
-            label: info?.data[0]?.attributes?.link_title,
-            path: `/news/${info?.data[0]?.attributes?.slug}`,
+            label: linkTitle,
+            path: `/news/${slug}`,
           },
         ]}
       />
@@ -123,37 +131,21 @@ export default async function Post({ params }) {
               "mx-auto mh5:max-w-[83.33333333%] mh12:max-w-[66.66666667%]"
             }
           >
-            <h1 className={"heading-1 text-center font-bold"}>
-              {info?.data[0]?.attributes?.title}
-            </h1>
+            <h1 className={"heading-1 text-center font-bold"}>{title}</h1>
             <ReactMarkdown className={"paragraph whitespace-pre-wrap"}>
-              {info?.data[0]?.attributes?.heading_content}
+              {headingContent}
             </ReactMarkdown>
           </div>
         </div>
       </div>
-      {info?.data[0]?.attributes?.article_content.length > 0 && (
-        <DynamicZone
-          color={info?.data[0]?.attributes?.color}
-          data={info?.data[0]?.attributes?.article_content}
-        />
+      {articleContent.length > 0 && (
+        <DynamicZone color={color} data={articleContent} />
       )}
-      {info?.data[0]?.attributes?.slider_1.length > 0 && (
-        <Slider
-          data={info?.data[0]?.attributes?.slider_1}
-          mainColor={info?.data[0]?.attributes?.color}
-        />
+      {slider.length > 0 && <Slider data={slider} mainColor={color} />}
+      {bottomSection.length > 0 && (
+        <DynamicZone data={bottomSection} color={color} />
       )}
-      {info?.data[0]?.attributes?.bottom_section.length > 0 && (
-        <DynamicZone
-          data={info?.data[0]?.attributes?.bottom_section}
-          color={info?.data[0]?.attributes?.color}
-        />
-      )}
-      <Contact
-        color={info?.data[0]?.attributes?.color}
-        data={info?.data[0]?.attributes?.contact}
-      />
+      <Contact color={color} data={contact} />
     </>
   );
 }

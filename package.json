@@ -26,6 +26,7 @@
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4",
     "grommet-icons": "^4.10.0",
+    "lodash": "^4.17.21",
     "next": "^13.4.4",
     "next-auth": "^4.22.1",
     "plyr-react": "^5.2.0",

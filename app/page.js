@@ -6,7 +6,7 @@ import PostSlider from "@/app/components/posts_slider";
 import Videos from "@/app/components/videos_list";
 import Link from "next/link";
 import joinClass from "@/app/lib/joinClass";
-
+import { get } from "lodash";
 export const metadata = {
   title: "Home | Wirtgen Group in USA and Canada",
   description:
@@ -86,6 +86,8 @@ async function fetchRows() {
   return res.json();
 }
 const Heading = ({ heading }) => {
+  const headingTitle = get(heading, "data.attributes.title", "");
+  const headingContent = get(heading, "data.attributes.content", "");
   return (
     <div
       className={
@@ -98,45 +100,48 @@ const Heading = ({ heading }) => {
             "heading-1 brand-color-text whitespace-pre-wrap text-center"
           }
         >
-          {heading?.data?.attributes?.title}
+          {headingTitle}
         </ReactMarkdown>
         <ReactMarkdown
           className={
             "brand-color-text whitespace-pre-wrap text-center text-[18px] leading-[30px]"
           }
         >
-          {heading?.data?.attributes?.content}
+          {headingContent}
         </ReactMarkdown>
       </div>
     </div>
   );
 };
 const Product = ({ products }) => {
+  const processedProducts = get(products, "data.attributes.brand_product", []);
   return (
     <div className={"section-page pb-[60px]"}>
       <div className={"page-container"}>
         <div className={"flex flex-wrap"}>
-          {products?.data?.attributes?.brand_product?.map((item, index) => (
-            <div className={"flex-auto basis-1/2 md:basis-0"} key={index}>
-              <Image
-                className={"m-auto h-auto w-auto"}
-                src={
-                  process.env.NEXT_PUBLIC_API_URL +
-                  item?.icon?.data?.attributes?.url
-                }
-                alt={item?.icon?.data?.attributes?.name}
-                width={0}
-                height={0}
-              />
-              <div
-                className={
-                  "brand-color-text mt-[5px] text-center font-semibold uppercase"
-                }
-              >
-                {item?.title}
+          {processedProducts.map((item, index) => {
+            let url = get(item, "icon.data.attributes.url", "");
+            let alt = get(item, "icon.data.attributes.name", "");
+            let title = get(item, "title", "");
+            return (
+              <div className={"flex-auto basis-1/2 md:basis-0"} key={index}>
+                <Image
+                  className={"m-auto h-auto w-auto"}
+                  src={process.env.NEXT_PUBLIC_API_URL + url}
+                  alt={alt}
+                  width={0}
+                  height={0}
+                />
+                <div
+                  className={
+                    "brand-color-text mt-[5px] text-center font-semibold uppercase"
+                  }
+                >
+                  {title}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -144,7 +149,8 @@ const Product = ({ products }) => {
 };
 
 const Service = ({ services }) => {
-  const list = services?.data?.attributes?.services?.map((item, index) => (
+  const processedServices = get(services, "data.attributes.services", []);
+  const list = processedServices.map((item, index) => (
     <div
       key={index}
       className={
@@ -157,6 +163,15 @@ const Service = ({ services }) => {
   return <>{list}</>;
 };
 const Item = ({ item }) => {
+  const title = get(item, "Title", "");
+  const leftUrl = get(item, "left_image.data.attributes.url", "");
+  const leftAlt = get(item, "left_image.data.attributes.name", "");
+  const leftTitle = get(item, "left_title", "");
+  const leftContent = get(item, "left_content", "");
+  const rightUrl = get(item, "right_image.data.attributes.url", "");
+  const rightAlt = get(item, "right_image.data.attributes.name", "");
+  const rightTitle = get(item, "right_title", "");
+  const rightContent = get(item, "right_content", "");
   return (
     <div className={"page-container"}>
       <div className={"ml-[-20px] mr-[-20px] flex flex-wrap justify-center"}>
@@ -165,63 +180,57 @@ const Item = ({ item }) => {
             "flex-3-cols heading-2 brand-color-text mb-[10px] font-bold"
           }
         >
-          {item?.Title}
+          {title}
         </div>
         <div className={"flex-3-cols flex flex-col"}>
-          {item?.left_image?.data?.attributes?.url && (
+          {leftUrl && (
             <Image
               className={"mb-4 w-full"}
-              src={
-                process.env.NEXT_PUBLIC_API_URL +
-                item?.left_image?.data?.attributes?.url
-              }
-              alt={item?.left_image?.data?.attributes?.name}
+              src={process.env.NEXT_PUBLIC_API_URL + leftUrl}
+              alt={leftAlt}
               width={360}
               height={203}
             />
           )}
-          {item?.left_title && (
+          {leftTitle && (
             <div
               className={
                 "brand-color-text mb-4 text-[18px] font-semibold leading-[30px]"
               }
             >
-              {item?.left_title}
+              {leftTitle}
             </div>
           )}
           <ReactMarkdown
             className={"brand-color-text row-title paragraph mb-4"}
           >
-            {item?.left_content}
+            {leftContent}
           </ReactMarkdown>
         </div>
         <div className={"flex-3-cols flex flex-col"}>
-          {item?.right_image?.data?.attributes?.url && (
+          {rightUrl && (
             <Image
               className={"mb-4 w-full"}
-              src={
-                process.env.NEXT_PUBLIC_API_URL +
-                item?.right_image?.data?.attributes?.url
-              }
-              alt={item?.right_image?.data?.attributes?.name}
+              src={process.env.NEXT_PUBLIC_API_URL + rightUrl}
+              alt={rightAlt}
               width={360}
               height={203}
             />
           )}
-          {item?.right_title && (
+          {rightTitle && (
             <div
               className={
                 "brand-color-text mb-4 text-[18px] font-semibold leading-[30px]"
               }
             >
-              {item?.right_title}
+              {rightTitle}
             </div>
           )}
 
           <ReactMarkdown
             className={"brand-color-text row-title paragraph mb-4"}
           >
-            {item?.right_content}
+            {rightContent}
           </ReactMarkdown>
         </div>
       </div>
@@ -229,105 +238,108 @@ const Item = ({ item }) => {
   );
 };
 const Career = ({ career }) => {
-  const item = career?.data?.attributes?.career;
+  const processedCareer = get(career, "data.attributes.career", []);
   return (
     <div
       className={
         "section-page py-[30px] md:py-[40px] mh9:py-[50px] mh12:py-[60px]"
       }
     >
-      <Item item={item} />
+      <Item item={processedCareer} />
     </div>
   );
 };
 
 export const InfoRow = ({ rows, reverse }) => {
-  const list = rows?.map((item, index) => (
-    <div
-      key={index}
-      className={
-        "section-page pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"
-      }
-    >
-      <div className={"mx-auto w-full"}>
-        <div
-          className={joinClass(
-            !reverse && index % 2 !== 0 ? "mh9:flex-row-reverse" : "",
-            reverse && index % 2 === 0 ? "mh9:flex-row-reverse" : "",
-            "flex flex-col mh9:flex-row"
-          )}
-        >
-          <div
-            style={{
-              backgroundImage: `url(${
-                process.env.NEXT_PUBLIC_API_URL +
-                item?.image?.data?.attributes?.url
-              })`,
-            }}
-            className={
-              "h-auto bg-cover bg-center bg-no-repeat before:block before:w-full before:pt-[50%] before:content-[''] mh9:max-w-[calc(50%+85px)] mh9:flex-[0_0_55%]"
-            }
-          />
+  const list = rows.map((item, index) => {
+    const url = get(item, "image.data.attributes.url", "");
+    const title = get(item, "title", "");
+    const content = get(item, "content", "");
+    const buttonLink = get(item, "button_link", "");
+    const buttonText = get(item, "button_text", "");
+    return (
+      <div
+        key={index}
+        className={
+          "section-page pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"
+        }
+      >
+        <div className={"mx-auto w-full"}>
           <div
             className={joinClass(
-              "mh12:py-[80px]",
-              "mh12:px-[100px]",
-              "mh9:py-[60px]",
-              "mh9:px-[80px]",
-              "mh5:py-[30px]",
-              "mh5:px-[50px]",
-              "text-center",
-              "mh5:text-left",
-              "py-[20px]",
-              "px-[20px]",
-              "mh12:max-w-[calc(50%+85px-135px)]",
-              "mh9:max-w-[calc(50%)]",
-              "mh9:my-[50px]",
-              "bg-[#f3f3f3]",
-              "mh5:mx-[43px]",
-              "md:mx-[33px]",
-              "mh5:my-0",
-              "mx-0",
-              "mx-[24px]",
-              "mh9:flex-[0_0_100%]",
-              "translate-y-[-50px]",
-              "mh9:translate-y-0",
-              !reverse && index % 2 !== 0
-                ? "mh9:translate-x-[140px] mh12:translate-x-[170px]"
-                : "mh9:translate-x-[-140px] mh12:translate-x-[-170px]",
-              reverse && index % 2 === 0
-                ? "mh9:translate-x-[140px] mh12:translate-x-[170px]"
-                : "mh9:translate-x-[-140px] mh12:translate-x-[-170px]"
+              !reverse && index % 2 !== 0 ? "mh9:flex-row-reverse" : "",
+              reverse && index % 2 === 0 ? "mh9:flex-row-reverse" : "",
+              "flex flex-col mh9:flex-row"
             )}
           >
-            <div className={"heading-2 mb-[15px] font-bold"}>{item?.title}</div>
-            <ReactMarkdown
+            <div
+              style={{
+                backgroundImage: `url(${
+                  process.env.NEXT_PUBLIC_API_URL + url
+                })`,
+              }}
               className={
-                "paragraph info-row-content mb-[30px] whitespace-pre-wrap"
+                "h-auto bg-cover bg-center bg-no-repeat before:block before:w-full before:pt-[50%] before:content-[''] mh9:max-w-[calc(50%+85px)] mh9:flex-[0_0_55%]"
               }
+            />
+            <div
+              className={joinClass(
+                "mh12:py-[80px]",
+                "mh12:px-[100px]",
+                "mh9:py-[60px]",
+                "mh9:px-[80px]",
+                "mh5:py-[30px]",
+                "mh5:px-[50px]",
+                "text-center",
+                "mh5:text-left",
+                "py-[20px]",
+                "px-[20px]",
+                "mh12:max-w-[calc(50%+85px-135px)]",
+                "mh9:max-w-[calc(50%)]",
+                "mh9:my-[50px]",
+                "bg-[#f3f3f3]",
+                "mh5:mx-[43px]",
+                "md:mx-[33px]",
+                "mh5:my-0",
+                "mx-0",
+                "mx-[24px]",
+                "mh9:flex-[0_0_100%]",
+                "translate-y-[-50px]",
+                "mh9:translate-y-0",
+                !reverse && index % 2 !== 0
+                  ? "mh9:translate-x-[140px] mh12:translate-x-[170px]"
+                  : "mh9:translate-x-[-140px] mh12:translate-x-[-170px]",
+                reverse && index % 2 === 0
+                  ? "mh9:translate-x-[140px] mh12:translate-x-[170px]"
+                  : "mh9:translate-x-[-140px] mh12:translate-x-[-170px]"
+              )}
             >
-              {item?.content}
-            </ReactMarkdown>
-            {item?.button_link && item?.button_text && (
-              <a
-                href={item?.button_link}
-                className={"button-main button-brand"}
+              <div className={"heading-2 mb-[15px] font-bold"}>{title}</div>
+              <ReactMarkdown
+                className={
+                  "paragraph info-row-content mb-[30px] whitespace-pre-wrap"
+                }
               >
-                {item?.button_text}
-              </a>
-            )}
+                {content}
+              </ReactMarkdown>
+              {buttonLink && buttonText && (
+                <a href={buttonLink} className={"button-main button-brand"}>
+                  {buttonText}
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ));
+    );
+  });
   return <>{list}</>;
 };
 const Contact = () => {
   return (
     <div
       className={
-        "section-page pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"
+        "section-page pt-[30px] md:pt-[40px] mh9:pt-[50px] mh12:pt-[60px]"
       }
     >
       <div
@@ -375,6 +387,7 @@ export default async function Home() {
       videosData,
       rowsData,
     ]);
+  const processedRows = get(rows, "data.attributes.info_rows", []);
   return (
     <>
       <HomeSlider sliders={sliders} />
@@ -392,7 +405,7 @@ export default async function Home() {
       <PostSlider posts={posts} />
       <Career career={career} />
       <Videos videos={videos} />
-      <InfoRow rows={rows?.data?.attributes?.info_rows} reverse={false} />
+      <InfoRow rows={processedRows} reverse={false} />
       <Contact />
     </>
   );

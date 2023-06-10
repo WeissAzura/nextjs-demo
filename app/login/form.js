@@ -13,7 +13,7 @@ import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import { signIn } from "next-auth/react";
-import { Facebook, Google, Twitter } from "grommet-icons";
+import { Google } from "grommet-icons";
 import React, { useState } from "react";
 import Container from "@mui/material/Container";
 
@@ -230,20 +230,12 @@ export default function LoginForm() {
               justifyContent: "center",
             }}
           >
-            {/* <IconButton onClick={() => signIn("facebook")}>
-              <Facebook color={"plain"} size={"large"} />
-            </IconButton> */}
-
             <div className="flex items-center justify-center rounded px-4 py-2 text-[16px] md:text-[18px]">
               <IconButton>
                 <Google color={"plain"} size={"medium"} />
               </IconButton>
               Continue with Google
             </div>
-
-            {/* <IconButton onClick={() => signIn("twitter")}>
-              <Twitter color={"plain"} size={"large"} />
-            </IconButton> */}
           </Box>
         </form>
       </Box>

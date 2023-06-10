@@ -11,6 +11,7 @@ import "swiper/css/autoplay";
 import { Lightbox } from "yet-another-react-lightbox";
 import { useState } from "react";
 import "yet-another-react-lightbox/styles.css";
+import { get } from "lodash";
 
 const SwiperButtonNext = ({ children }) => {
   const swiper = useSwiper();
@@ -41,18 +42,21 @@ const SwiperButtonPrev = ({ children }) => {
 };
 const CustomSlider = ({ item }) => {
   const [open, setOpen] = useState(false);
+  const title = get(item, "title", "");
+  const imageUrl = get(item, "image.data.attributes.url", "");
+  const imageAlt = get(item, "image.data.attributes.name", "");
+  const buttonLink = get(item, "button_link", "");
+  const buttonText = get(item, "button_text", "");
   return (
     <>
       <Image
         className={"min-h-[300px] w-full object-cover"}
-        src={
-          process.env.NEXT_PUBLIC_API_URL + item?.image?.data?.attributes?.url
-        }
-        alt={item?.image?.data?.attributes?.name}
+        src={process.env.NEXT_PUBLIC_API_URL + imageUrl}
+        alt={imageAlt}
         width={1680}
         height={945}
       />
-      {item?.video && (
+      {item.video && (
         <Lightbox
           open={open}
           carousel={{ finite: true }}
@@ -65,7 +69,7 @@ const CustomSlider = ({ item }) => {
           slides={[
             {
               type: "video",
-              sources: [{ src: item?.button_link, type: "video/mp4" }],
+              sources: [{ src: buttonLink, type: "video/mp4" }],
               width: 1280,
               autoPlay: true,
               height: 720,
@@ -91,19 +95,19 @@ const CustomSlider = ({ item }) => {
                 "heading-1 whitespace-pre-wrap text-white md:mb-[15px]"
               }
             >
-              {item?.title}
+              {title}
             </ReactMarkdown>
             <a
               className={"button-main button-white"}
-              href={item?.video ? "" : item?.button_link}
+              href={item.video ? "" : buttonLink}
               onClick={(e) => {
-                if (item?.video) {
+                if (item.video) {
                   e.preventDefault();
                   setOpen(true);
                 }
               }}
             >
-              {item?.button_text}
+              {buttonText}
             </a>
           </div>
         </div>
@@ -112,6 +116,7 @@ const CustomSlider = ({ item }) => {
   );
 };
 export default function HomeSlider({ sliders }) {
+  const processedSliders = get(sliders, "data.attributes.top_slider", []);
   return (
     <Swiper
       className={"swiper-container section-page group/slider home-slider"}
@@ -121,7 +126,7 @@ export default function HomeSlider({ sliders }) {
       loop={true}
       autoplay={{ delay: 5000 }}
     >
-      {sliders?.data?.attributes?.top_slider?.map((item, index) => (
+      {processedSliders.map((item, index) => (
         <SwiperSlide className={"swiper-slide max-h-[768px]"} key={index}>
           <CustomSlider item={item} />
         </SwiperSlide>

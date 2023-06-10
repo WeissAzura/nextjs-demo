@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { useInView } from "react-intersection-observer";
+import { get } from "lodash";
 export async function fetchPosts({ queryKey, pageParam = 1 }) {
   const [_, watchAllCheckboxes, searchTerm] = queryKey;
   let stringUrl = "";
@@ -32,7 +33,12 @@ export async function fetchPosts({ queryKey, pageParam = 1 }) {
   return response.json();
 }
 const Posts = ({ post, index, lastRef, last }) => {
-  const inputDate = new Date(post?.attributes?.createdAt);
+  const inputDate = new Date(post.attributes.createdAt);
+  const imageUrl = get(post, "attributes.thumbnail.data.attributes.url", "");
+  const imageAlt = get(post, "attributes.thumbnail.data.attributes.name", "");
+  const postTitle = get(post, "attributes.title", "");
+  const postExcerpt = get(post, "attributes.excerpt", "");
+  const postSlug = get(post, "attributes.slug", "");
   const dateObj = new Date(inputDate);
   const outputDate = format(dateObj, "MM/dd/yy");
   return (
@@ -50,11 +56,8 @@ const Posts = ({ post, index, lastRef, last }) => {
         <div className={"flex flex-col md:flex-row md:gap-x-[28px]"}>
           <div className={"md:max-w-[calc(1/3)] md:basis-1/3"}>
             <Image
-              src={
-                process.env.NEXT_PUBLIC_API_URL +
-                post?.attributes?.thumbnail?.data?.attributes?.url
-              }
-              alt={post?.attributes?.thumbnail?.data?.attributes?.name}
+              src={process.env.NEXT_PUBLIC_API_URL + imageUrl}
+              alt={imageAlt}
               width={355}
               height={200}
               className={"mb-[15px] w-full object-cover md:mb-0"}
@@ -68,12 +71,12 @@ const Posts = ({ post, index, lastRef, last }) => {
             >
               {outputDate}
             </div>
-            <div className={"heading-5"}>{post?.attributes?.title}</div>
+            <div className={"heading-5"}>{postTitle}</div>
             <div className={"paragraph hidden md:mb-[20px] md:block"}>
-              {post?.attributes?.excerpt}
+              {postExcerpt}
             </div>
             <Link
-              href={`/news/${post?.attributes?.slug}`}
+              href={`/news/${postSlug}`}
               className={"button-main button-brand m-0 self-start"}
             >
               View article
@@ -90,6 +93,7 @@ export default function FilterBar() {
     queryKey: ["categories"],
     queryFn: fetchCategories,
   });
+  const processedCategories = get(categories, "data.data", []);
   const { ref: lastRef, inView } = useInView();
   const { watch, handleSubmit, register } = useForm({
     defaultValues: {
@@ -110,10 +114,9 @@ export default function FilterBar() {
     queryKey: ["posts", watchAllCheckboxes, search],
     queryFn: fetchPosts,
     getNextPageParam: (lastPage) => {
-      return lastPage?.meta?.pagination?.page <
-        lastPage?.meta?.pagination?.pageCount
-        ? lastPage?.meta?.pagination?.page + 1
-        : undefined;
+      const currentPage = get(lastPage, "meta.pagination.page", 1);
+      const totalPages = get(lastPage, "meta.pagination.pageCount", 1);
+      return currentPage < totalPages ? currentPage + 1 : undefined;
     },
   });
   useEffect(() => {
@@ -126,14 +129,15 @@ export default function FilterBar() {
   let group = [];
 
   if (status === "success") {
-    posts.pages?.map((g) => {
+    let pages = get(posts, "pages", []);
+    pages.map((g) => {
       group = [...group, ...g.data];
     });
     postsData =
       group.length > 0 ? (
-        group?.map((post, index) => (
+        group.map((post, index) => (
           <Posts
-            key={post?.attributes?.slug}
+            key={post.attributes.slug}
             post={post}
             last={group.length - 1}
             index={index}
@@ -167,36 +171,39 @@ export default function FilterBar() {
                     "flex flex-col gap-y-[1rem] mh5:flex-row mh5:flex-wrap mh5:items-center"
                   }
                 >
-                  {categories.data?.data?.map((category) => (
-                    <div
-                      key={category?.attributes?.slug}
-                      className={"relative w-full mh5:mt-[10px] mh5:w-1/3"}
-                    >
-                      <input
-                        className={
-                          "invisible absolute top-0 -z-10 m-0 h-[18px] w-[18px] opacity-0"
-                        }
-                        id={category?.attributes?.slug}
-                        type={"checkbox"}
-                        value={category?.attributes?.slug}
-                        {...register("company")}
-                      />
-                      <label
-                        className={joinClass(
-                          "paragraph",
-                          "font-semibold",
-                          "label-input",
-                          "flex items-center",
-                          watchAllCheckboxes.includes(
-                            category?.attributes?.slug
-                          ) && "label-input-checked"
-                        )}
-                        htmlFor={category?.attributes?.slug}
+                  {processedCategories.map((category) => {
+                    let categorySlug = get(category, "attributes.slug", "");
+                    let categoryName = get(category, "attributes.name", "");
+                    return (
+                      <div
+                        key={categorySlug}
+                        className={"relative w-full mh5:mt-[10px] mh5:w-1/3"}
                       >
-                        {category?.attributes?.name}
-                      </label>
-                    </div>
-                  ))}
+                        <input
+                          className={
+                            "invisible absolute top-0 -z-10 m-0 h-[18px] w-[18px] opacity-0"
+                          }
+                          id={categorySlug}
+                          type={"checkbox"}
+                          value={categorySlug}
+                          {...register("company")}
+                        />
+                        <label
+                          className={joinClass(
+                            "paragraph",
+                            "font-semibold",
+                            "label-input",
+                            "flex items-center",
+                            watchAllCheckboxes.includes(categorySlug) &&
+                              "label-input-checked"
+                          )}
+                          htmlFor={categorySlug}
+                        >
+                          {categoryName}
+                        </label>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div className={"max-w-full mh9:max-w-[50%] mh9:flex-[0_0_50%]"}>

@@ -79,7 +79,11 @@ export default function Header() {
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <Link href={"/"} className="-m-1.5 p-1.5">
+            <Link
+              href={"/"}
+              className="-m-1.5 p-1.5"
+              onClick={() => setMobileMenuOpen(false)}
+            >
               <span className="sr-only">Wirtgen Group</span>
               <Image
                 src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/Vector_bd3dc6ce95.svg`}
@@ -103,18 +107,21 @@ export default function Header() {
               <div className="space-y-2 py-6">
                 <Link
                   href={"/"}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Home
                 </Link>
                 <Link
                   href={"/news"}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   News
                 </Link>
                 <Link
                   href={"/customer-support"}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="-mx-3 block rounded-lg px-3 py-2 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Customer Support
@@ -124,6 +131,7 @@ export default function Header() {
                 <button
                   onClick={() => {
                     status === "authenticated" ? signOut() : signIn();
+                    setMobileMenuOpen(false);
                   }}
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-medium leading-7 text-gray-900 hover:bg-gray-50"
                 >

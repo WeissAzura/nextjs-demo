@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import joinClass from "@/app/lib/joinClass";
+import { get } from "lodash";
 
 const useSticky = (element) => {
   const [isSticky, setSticky] = useState(false);
@@ -25,6 +26,8 @@ const useSticky = (element) => {
 export function NavigationBar({ item, color }) {
   const elementRef = useRef(null);
   const isSticky = useSticky(elementRef);
+  const downloadTitle = get(item, "download_title", "");
+  const contactTitle = get(item, "contact_title", "");
   return (
     <div
       ref={elementRef}
@@ -55,7 +58,7 @@ export function NavigationBar({ item, color }) {
             )}
             href={"#download-section"}
           >
-            {item?.download_title}
+            {downloadTitle}
           </a>
           <a
             className={joinClass(
@@ -64,7 +67,7 @@ export function NavigationBar({ item, color }) {
             )}
             href={"#contact-section"}
           >
-            {item?.contact_title}
+            {contactTitle}
           </a>
         </nav>
       </div>

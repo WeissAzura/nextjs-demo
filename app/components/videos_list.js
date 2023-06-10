@@ -5,25 +5,26 @@ import "yet-another-react-lightbox/styles.css";
 import { useState } from "react";
 import { Lightbox } from "yet-another-react-lightbox";
 import Image from "next/image";
-export const CustomSlide = ({ item }) => {
+import { get } from "lodash";
+export const CustomVideo = ({ item }) => {
   const [open, setOpen] = useState(false);
-  if (item?.video)
+  const thumbnailUrl = get(item, "thumbnail.data.attributes.url", "");
+  const thumbnailAlt = get(item, "thumbnail.data.attributes.name", "");
+  const videoUrl = get(item, "video.data.attributes.url", "");
+  if (item.video)
     return (
       <>
         <div
           className={"relative cursor-pointer"}
           onClick={() => {
-            if (item?.video) {
+            if (item.video) {
               setOpen(true);
             }
           }}
         >
           <Image
-            src={
-              process.env.NEXT_PUBLIC_API_URL +
-              item?.thumbnail?.data?.attributes?.url
-            }
-            alt={item?.thumbnail?.data?.attributes?.name}
+            src={process.env.NEXT_PUBLIC_API_URL + thumbnailUrl}
+            alt={thumbnailAlt}
             width={1680}
             height={945}
           />
@@ -72,9 +73,7 @@ export const CustomSlide = ({ item }) => {
           slides={[
             {
               type: "custom",
-              sourceVideo:
-                process.env.NEXT_PUBLIC_API_URL +
-                item?.video?.data?.attributes?.url,
+              sourceVideo: process.env.NEXT_PUBLIC_API_URL + videoUrl,
             },
           ]}
         />
@@ -82,7 +81,8 @@ export const CustomSlide = ({ item }) => {
     );
 };
 export default function Videos({ videos }) {
-  const list = videos?.data?.attributes?.videos?.map((item, index) => (
+  const processedVideos = get(videos, "data.attributes.videos", []);
+  const list = processedVideos.map((item, index) => (
     <div
       className={
         "section-page pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"
@@ -97,7 +97,7 @@ export default function Videos({ videos }) {
         >
           {item?.title}
         </div>
-        <CustomSlide item={item} />
+        <CustomVideo item={item} />
       </div>
     </div>
   ));

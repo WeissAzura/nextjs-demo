@@ -7,30 +7,33 @@ import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import { useState } from "react";
 import joinClass from "@/app/lib/joinClass";
+import { get } from "lodash";
 
 export default function Slider({ data, mainColor }) {
   const [slide1, setSlide1] = useState(null);
   const [slide2, setSlide2] = useState(null);
   const [slide3, setSlide3] = useState(null);
-  const bigSlider = data?.map((item) => {
+  const bigSlider = data.map((item) => {
+    let imageUrl = get(item, "image.data.attributes.url", "");
+    let imageAlt = get(item, "image.data.attributes.name", "");
     return (
       <SwiperSlide
         className={"swiper-container swiper-slide h-full w-full"}
-        key={item?.id}
+        key={item.id}
       >
         <Image
           className={"h-full object-cover object-center"}
-          src={
-            process.env.NEXT_PUBLIC_API_URL + item?.image?.data?.attributes?.url
-          }
-          alt={"image"}
+          src={process.env.NEXT_PUBLIC_API_URL + imageUrl}
+          alt={imageAlt}
           width={1920}
           height={1080}
         />
       </SwiperSlide>
     );
   });
-  const smallSlider = data?.map((item) => {
+  const smallSlider = data.map((item) => {
+    let imageUrl = get(item, "image.data.attributes.url", "");
+    let imageAlt = get(item, "image.data.attributes.name", "");
     return (
       <SwiperSlide
         className={"swiper-container swiper-slide max-w-[600px]"}
@@ -38,22 +41,21 @@ export default function Slider({ data, mainColor }) {
       >
         <Image
           className={"max-h-[336px] max-w-[600px] object-cover object-center"}
-          src={
-            process.env.NEXT_PUBLIC_API_URL + item?.image?.data?.attributes?.url
-          }
-          alt={"image"}
+          src={process.env.NEXT_PUBLIC_API_URL + imageUrl}
+          alt={imageAlt}
           width={1920}
           height={1080}
         />
       </SwiperSlide>
     );
   });
-  const textSlider = data?.map((item) => {
+  const textSlider = data.map((item) => {
+    let content = get(item, "content", "");
     return (
       <SwiperSlide className={"swiper-container swiper-slide"} key={item?.id}>
         <div className={"h-full bg-[#f3f3f3] px-[60px] py-[40px]"}>
           <ReactMarkdown className={"paragraph whitespace-pre-wrap"}>
-            {item?.content}
+            {content}
           </ReactMarkdown>
         </div>
       </SwiperSlide>

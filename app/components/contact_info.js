@@ -1,9 +1,11 @@
 "use client";
 import { useRef, useState } from "react";
 import joinClass from "@/app/lib/joinClass";
+import { get } from "lodash";
 const Card = ({ row, active, setActive }) => {
   const accordionRef = useRef(null);
   const buttonRef = useRef(null);
+  const employees = get(row, "employee", []);
   return (
     <div>
       <div
@@ -24,12 +26,12 @@ const Card = ({ row, active, setActive }) => {
           <div>
             <div className="heading-4 font-semibold">{row?.title}</div>
             <div className="text-[13px] font-medium leading-[30px] md:hidden">
-              {row?.employee?.length} Contacts
+              {employees.length} Contacts
             </div>
           </div>
           <div className="flex items-center gap-x-[43px]">
             <div className="intro hidden font-semibold md:block">
-              {row?.employee?.length} Contacts
+              {employees.length} Contacts
             </div>
             <svg
               className={joinClass(
@@ -56,7 +58,7 @@ const Card = ({ row, active, setActive }) => {
           maxHeight: active === row.id ? accordionRef.current.scrollHeight : 0,
         }}
       >
-        {row?.employee?.map((employee) => (
+        {employees.map((employee) => (
           <div key={employee?.id}>
             <div className="mh5:mb-[50px] mh5:px-[30px] mh9:px-[50px]">
               <div className="heading-[23px] mh5:heading-[27px] pb-[10px] pt-[20px] text-[20px] font-semibold mh5:text-[22px]">
@@ -135,8 +137,8 @@ export default function ContactList({ rows }) {
           "page-container flex flex-col gap-y-[10px] pb-[30px] md:pb-[40px] mh9:pb-[50px] mh12:pb-[60px]"
         }
       >
-        {rows?.map((row) => (
-          <Card key={row?.id} row={row} active={active} setActive={setActive} />
+        {rows.map((row) => (
+          <Card key={row.id} row={row} active={active} setActive={setActive} />
         ))}
       </div>
     </div>
